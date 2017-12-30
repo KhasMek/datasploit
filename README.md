@@ -48,6 +48,7 @@ Options:
 # Required Setup:
 * Python 2.7 (because bunch of dependencies do not support Python 3.0)
 * Bunch of python libraries (use requirements.txt)
+* [PhantomJS](http://phantomjs.org), [Firefox](https://www.mozilla.org/firefox) or [Chrome](https://www.google.com/chrome) (to assist in rendering websites that are javascript heavy)
 
 
 ## Detailed Tool Documentation:
