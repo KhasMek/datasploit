@@ -3,8 +3,11 @@
 from ipwhois import IPWhois
 import sys
 from termcolor import colored
+import warnings
 
 ENABLED = True
+
+# warnings.filterwarnings("ignore")
 
 
 class style:
@@ -61,6 +64,7 @@ def output(data, ip=""):
 
 if __name__ == "__main__":
     try:
+        warnings.filterwarnings("ignore")
         ip = sys.argv[1]
         banner()
         result = main(ip)
