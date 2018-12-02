@@ -16,32 +16,13 @@ class style:
     END = '\033[0m'
 
 
-def colorize(string):
-    colourFormat = '\033[{0}m'
-    colourStr = colourFormat.format(32)
-    resetStr = colourFormat.format(0)
-    lastMatch = 0
-    formattedText = ''
-    for match in re.finditer(
-            r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,4})|/(?:http:\/\/)?(?:([^.]+)\.)?datasploit\.info/|/(?:http:\/\/)?(?:([^.]+)\.)?(?:([^.]+)\.)?datasploit\.info/)',
-            string):
-        start, end = match.span()
-        formattedText += string[lastMatch: start]
-        formattedText += colourStr
-        formattedText += string[start: end]
-        formattedText += resetStr
-        lastMatch = end
-    formattedText += string[lastMatch:]
-    return formattedText
-
-
 def google_search(domain):
     google_cse_key = vault.get_key('google_cse_key')
     google_cse_cx = vault.get_key('google_cse_cx')
     url = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q=\"%s\"&start=1" % (
         google_cse_key, google_cse_cx, domain)
     all_results = []
-    r = requests.get(url, headers={'referer': 'www.datasploit.info/hello'})
+    r = requests.get(url)
     data = json.loads(r.content)
     if 'error' in data:
         return False, data
@@ -52,19 +33,19 @@ def google_search(domain):
             url = "https://www.googleapis.com/customsearch/v1?key=%s&cx=%s&q=\"%s\"&start=%s" % (
                 google_cse_key, google_cse_cx, domain, next_index)
             data = json.loads(requests.get(url).content)
-	    if 'error' in data:
-	       return True, all_results
-	    else:
-	        all_results += data['items']
+            if 'error' in data:
+                return True, all_results
+            else:
+                all_results += data['items']
     return True, all_results
 
 
 def banner():
-    print colored(style.BOLD + '\n---> Finding Paste(s)..\n' + style.END, 'blue')
+    print colored(style.BOLD + '\n---> Finding Paste(s)\n' + style.END, 'blue')
 
 
 def main(domain):
-    if vault.get_key('google_cse_key') != None and vault.get_key('google_cse_cx') != None:
+    if vault.get_key('google_cse_key') and vault.get_key('google_cse_cx'):
         status, data = google_search(domain)
         return [status, data]
     else:
@@ -83,10 +64,10 @@ def output(data, domain=""):
     else:
         print "[+] %s results found\n" % len(data[1])
         for x in data[1]:
-	    title = x['title'].encode('ascii', 'ignore').decode('ascii')
-	    snippet = x['snippet'].encode('ascii', 'ignore').decode('ascii')
-	    link = x['link'].encode('ascii', 'ignore').decode('ascii')
-            print "Title: %s\nURL: %s\nSnippet: %s\n" % (title, colorize(link), colorize(snippet))
+            title = x['title'].encode('ascii', 'ignore').decode('ascii')
+            snippet = x['snippet'].encode('ascii', 'ignore').decode('ascii')
+            link = x['link'].encode('ascii', 'ignore').decode('ascii')
+            print "Title: %s\nURL: %s\nSnippet: %s\n" % (title, link, snippet)
 
 
 if __name__ == "__main__":
