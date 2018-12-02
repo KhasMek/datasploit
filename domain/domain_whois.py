@@ -14,26 +14,28 @@ class style:
     END = '\033[0m'
 
 
-def whoisnew(domain):
-    w = whois.whois(domain)
-    return dict(w)
-
-
 def banner():
-    print colored(style.BOLD + '---> Finding Whois Information.' + style.END, 'blue')
+    print colored(style.BOLD + '---> Finding Whois Information.\n' + style.END, 'blue')
 
 
 def main(domain):
-    return whoisnew(domain)
-
-
-def output(data, domain=""):
+    data = whois.whois(domain)
     for k in ('creation_date', 'expiration_date', 'updated_date'):
         if k in data:
             date = data[k][0] if isinstance(data[k], list) else data[k]
             if data[k]:
                 data[k] = date.strftime('%m/%d/%Y')
-    print data
+    return dict(data)
+
+
+def output(data, domain=""):
+    for k, v in data.items():
+        if isinstance(v, str):
+            print("{k}: {v}".format(k=k.replace('_', ' '), v=v))
+        elif isinstance(v, list):
+            print("{}:".format(k.replace('_', ' ')))
+            for i in v:
+                print("    {}".format(i))
     print "\n-----------------------------\n"
 
 
