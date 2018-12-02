@@ -19,7 +19,7 @@ class style:
 def shodandomainsearch(domain):
     time.sleep(0.3)
     endpoint = "https://api.shodan.io/shodan/host/search?key=%s&query=hostname:%s&facets={facets}" % (
-    vault.get_key('shodan_api'), domain)
+        vault.get_key('shodan_api'), domain)
     req = requests.get(endpoint)
     return req.content
 
@@ -42,8 +42,33 @@ def output(data, domain=""):
     else:
         if 'matches' in data.keys():
             for x in data['matches']:
-                print "IP: %s\nHosts: %s\nDomain: %s\nPort: %s\nData: %s\nLocation: %s\n" % (
-                x['ip_str'], x['hostnames'], x['domains'], x['port'], x['data'].replace("\n", ""), x['location'])
+                for key, value in x.items():
+                    view = [
+                        "ip_str",
+                        "hostnames",
+                        "domains",
+                        "port",
+                        "data",
+                        "location"
+                    ]
+                    if key in view:
+                        if (isinstance(value, unicode) or isinstance(value, int)):
+                            if "data" in key:
+                                value = value.rstrip('\n\r').replace("\n", "\n    ")
+                                print("{}:".format(key))
+                                print("    {}".format(value))
+                            else:
+                                print("{k}: {v}".format(k=key.split('_')[0], v=value))
+                        elif isinstance(value, list):
+                            print("{}:".format(key))
+                            for i in value:
+                                print("    {}".format(i))
+                        elif isinstance(value, dict):
+                            print("{}:".format(key.replace('_', ' ')))
+                            for k, v in value.items():
+                                if v:
+                                    print("    {k}: {v}".format(k=k.replace('_', ' '), v=v))
+                print('')
         print "-----------------------------\n"
 
 
