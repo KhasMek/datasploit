@@ -48,12 +48,12 @@ def output(data, domain=""):
     for x in data.keys():
         print x
         if "No" in data[x] and "Found" in data[x]:
-            print "\t%s" % data[x]
+            print "    %s" % data[x]
             data[x] = ''
         else:
             for y in data[x]:
                 try:
-                    print "\t%s" % y
+                    print "    %s" % y
                 except:
                     pass
     print "\n-----------------------------\n"
