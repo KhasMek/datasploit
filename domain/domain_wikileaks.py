@@ -2,10 +2,13 @@
 
 import base
 import requests
-from bs4 import BeautifulSoup
 import sys
-from termcolor import colored
 import time
+
+from bs4 import BeautifulSoup
+from termcolor import colored
+from urllib import quote
+
 
 ENABLED = True
 
@@ -38,8 +41,9 @@ def main(domain):
 
 
 def output(data, domain=""):
-    for tl, lnk in data.items():
-        print "%s (%s)" % (repr(lnk), tl)
+    for filename, url in data.items():
+        print(filename)
+        print("    {}".format(quote(url)))
     print ""
     print "For all results, visit: " + 'https://search.wikileaks.org/?query=&exact_phrase=%s&include_external_sources=True&order_by=newest_document_date' % domain
     print "\n-----------------------------\n"
