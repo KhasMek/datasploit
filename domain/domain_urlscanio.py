@@ -23,7 +23,7 @@ class style:
 
 
 def banner():
-    print(colored(style.BOLD + '\n[+] Scanning with urlscan.io.\n' +
+    print(colored(style.BOLD + '\n[+] Scanning with urlscan.io\n' +
                   style.END, 'blue'))
 
 
@@ -64,7 +64,7 @@ def get_results(uuid):
                 time.sleep(10)
         except requests.exceptions.ConnectionError:
             print(colored(style.BOLD + " [!] COULD NOT CONNECT TO URLSCAN.IO" +
-                  style.END, 'red'))
+                              style.END, 'red'))
             sys.exit(0)
 
 
@@ -105,9 +105,9 @@ def output(data, domain=""):
         for field, pname in fields_lists.iteritems():
             if field in data[search_field]:
                 if isinstance(data[search_field][field], list):
-                    print(" [+] {}: {}".format(pname, ', '.join(data[search_field][field])))
+                    print("{}: {}".format(pname, ', '.join(data[search_field][field])))
                 else:
-                    print(" [+] {}: {}".format(pname, data[search_field][field]))
+                    print("{}: {}".format(pname, data[search_field][field]))
 
 
 if __name__ == "__main__":
