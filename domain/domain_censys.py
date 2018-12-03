@@ -1,15 +1,22 @@
 #!/usr/bin/env python
 import base
-import re, sys, json, time, requests
+import requests
+import sys
 import vault
 from termcolor import colored
 
 
 ENABLED = True
 
+
 class style:
     BOLD = '\033[1m'
     END = '\033[0m'
+
+
+def banner():
+    print colored(style.BOLD + '\n---> Searching Censys.io:\n' + style.END, 'blue')
+
 
 def check_api_keys():
     try:
@@ -20,20 +27,19 @@ def check_api_keys():
     except:
         return False
 
-def censys_search(domain):
+
+def censys_search(domain, page=1):
     censys_list = []
 
     pages = float('inf')
-    page = 1
 
     censysio_id = vault.get_key('censysio_id')
     censysio_secret = vault.get_key('censysio_secret')
 
     while page <= pages:
-        print "Parsed and collected results from page %s" % (str(page))
-        #time.sleep(0.5)
         params = {'query': domain, 'page': page}
-        res = requests.post("https://www.censys.io/api/v1/search/ipv4", json=params,
+        res = requests.post("https://www.censys.io/api/v1/search/ipv4",
+                            json=params,
                             auth=(censysio_id, censysio_secret))
         payload = res.json()
 
@@ -87,21 +93,25 @@ def view(server, temp_dict):
 
 def output(data, domain=""):
     if data is not None:
-        for i in data:
-            print i
+        for result in data:
+            for k, v in result.items():
+                print("{k}: {v}".format(k=k.replace('_', ' '), v=v))
+            print('')
 
 
 def main(domain):
-    if check_api_keys() == True:
+    if check_api_keys():
         data = censys_search(domain)
         return data
     else:
         print colored(style.BOLD + '\n[-] Please configure respective API Keys for this module.\n' + style.END, 'red')
         return None
 
+
 if __name__ == "__main__":
     try:
         domain = sys.argv[1]
+        banner()
         result = main(domain)
         output(result, domain)
     except Exception as e:
